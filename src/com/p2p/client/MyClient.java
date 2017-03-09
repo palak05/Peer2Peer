@@ -11,10 +11,9 @@ import java.util.Scanner;
 public class MyClient {
 	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		Socket client = null;
 		try{
-			client = new Socket("169.254.89.58",7732);
+			client = new Socket("192.168.0.28",7732);
 		}
 		catch(IOException e){
 			System.out.println(e);
@@ -26,12 +25,12 @@ public class MyClient {
 			String str = null;
 			InputStream in = client.getInputStream();
 			DataInputStream fromServer = new DataInputStream(in);
-			do{
-				str = scan.next();
+			//do{
+				str = "ADD<sp>RFC<sp>321<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>567<cr><lf>Title:<sp>Domain Names and Company Name Retrieval<cr><lf><cr><lf>";
 				toServer.writeUTF(str);
-				str = fromServer.readUTF();
-				System.out.println(str +" mil gya");
-			}while(str!="end");
+				//str = fromServer.readUTF();
+				//System.out.println(str +" mil gya");
+			//}while(str!="end");
 			
 		}
 		catch(IOException e){
