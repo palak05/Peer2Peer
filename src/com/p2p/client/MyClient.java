@@ -12,6 +12,10 @@ public class MyClient {
 	
 	public static void main(String[] args) {
 		Socket client = null;
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Welcome to client:");
+		System.out.println("Please enter clients upload port: ");
+		int uploadPort = scan.nextInt();
 		try{
 			client = new Socket("192.168.0.28",7732);
 		}
@@ -21,7 +25,6 @@ public class MyClient {
 		try{
 			OutputStream out = client.getOutputStream();
 			DataOutputStream toServer = new DataOutputStream(out);
-			Scanner scan = new Scanner(System.in);
 			String str = null;
 			InputStream in = client.getInputStream();
 			DataInputStream fromServer = new DataInputStream(in);
