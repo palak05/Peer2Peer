@@ -26,8 +26,20 @@ public class MyClient {
 			InputStream in = client.getInputStream();
 			DataInputStream fromServer = new DataInputStream(in);
 			//do{
-				str = "ADD<sp>RFC<sp>321<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>567<cr><lf>Title:<sp>Domain Names and Company Name Retrieval<cr><lf><cr><lf>";
+				str = "ADD<sp>RFC<sp>123<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>1234<cr><lf>Title:<sp>A Proferred Official ICP<cr><lf>ADD<sp>RFC<sp>321<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>1234<cr><lf>Title:<sp>Domain Names and Company Name Retrieval<cr><lf><cr><lf>";
 				toServer.writeUTF(str);
+				System.out.println(fromServer.readUTF());
+				
+				str = "LOOKUP<sp>RFC<sp>123<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>1234<cr><lf>Title:<sp>Requirements for IPsec Remote Access Scenarios<cr><lf><cr><lf>";
+				toServer.writeUTF(str);
+				System.out.println(fromServer.readUTF());
+				str = "LIST<sp>ALL<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>1234<cr><lf>";
+				toServer.writeUTF(str);
+				System.out.println(fromServer.readUTF());
+				toServer.writeUTF("end");
+				str = "LOOKUP<sp>RFC<sp>123<sp>P2P-CI/1.0<cr><lf>Host:<sp>thishost.csc.ncsu.edu<cr><lf>Port:<sp>1234<cr><lf>Title:<sp>Requirements for IPsec Remote Access Scenarios<cr><lf><cr><lf>";
+				toServer.writeUTF(str);
+				System.out.println(fromServer.readUTF());
 				//str = fromServer.readUTF();
 				//System.out.println(str +" mil gya");
 			//}while(str!="end");
