@@ -16,10 +16,11 @@ public class MyClient implements Runnable {
 
 	int portNumber;
 	String folderName;
-	public MyClient(int portNumber, String folder) {
+	
+	public MyClient(int portNumber, String folderName) {
 		super();
 		this.portNumber = portNumber;
-		this.folderName = folder;
+		this.folderName = folderName;
 	}
 
 	public void run() {
@@ -29,8 +30,7 @@ public class MyClient implements Runnable {
 		try {
 			client = new Socket("127.0.0.1", 7732);
 		} catch (IOException e) {
-
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		try {
 			
@@ -118,9 +118,13 @@ public class MyClient implements Runnable {
 					String data = response.get(response.size() - 1);
 					//System.out.println(inputStreamReader2.readUTF());
 					try{
-					    PrintWriter writer = new PrintWriter("C:/Users/admin/Documents/IP/clientfolders/Text.txt", "UTF-8");
+					    PrintWriter writer = new PrintWriter(folderName + "rfc" + rfcNum + ".txt", "UTF-8");
 					    writer.println(data);
 					    writer.close();
+					    str = "ADD<sp>RFC<sp>" + rfcNum + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>127.0.0.1<cr><lf>Port:<sp>"
+								+ portNumber + "<cr><lf>Title:<sp>" + "rfc" + rfcNum + ".txt" + "<cr><lf>";
+						toServer.writeUTF(str);
+						System.out.println(fromServer.readUTF());
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -134,7 +138,7 @@ public class MyClient implements Runnable {
 			}
 			
 		} catch (IOException e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 
 	}
