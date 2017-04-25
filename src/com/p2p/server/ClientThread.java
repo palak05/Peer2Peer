@@ -172,7 +172,7 @@ public class ClientThread extends Thread {
 			
 			Iterator<RFCNode> iterator2 = MyServer.rfcList.iterator();
 			ClientNode clientNode = new ClientNode(portNo, hostName);
-			while(iterator.hasNext()) {
+			while(iterator2.hasNext()) {
 				RFCNode rfcNode = iterator2.next();
 				if (rfcNode.hostName.equals(clientNode)) {
 					iterator2.remove();
