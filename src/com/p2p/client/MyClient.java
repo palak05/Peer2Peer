@@ -25,9 +25,11 @@ public class MyClient implements Runnable {
 	public void run() {
 
 		Socket client = null;
+
 		try {
 			client = new Socket("127.0.0.1", 7732);
 		} catch (IOException e) {
+
 			System.out.println(e);
 		}
 		try {
