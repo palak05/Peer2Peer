@@ -182,11 +182,19 @@ public class ClientThread extends Thread {
 	}
 
 	public boolean addClient(int portNo, String hostName) {
-		return MyServer.clientList.add(new ClientNode(portNo, hostName));
+		ClientNode clientNode = new ClientNode(portNo, hostName);
+		if(MyServer.clientList.contains(clientNode)){
+			return true;
+		}
+		return MyServer.clientList.add(clientNode);
 	}
 
 	public boolean addRFC(int rfcNo, int portNo, String hostName, String title) {
-		return MyServer.rfcList.add(new RFCNode(rfcNo, new ClientNode(portNo, hostName), title));
+		RFCNode rfcNode = new RFCNode(rfcNo, new ClientNode(portNo, hostName), title);
+		if(MyServer.rfcList.contains(rfcNode)){
+			return true;
+		}
+		return MyServer.rfcList.add(rfcNode);
 
 	}
 

@@ -29,7 +29,6 @@ public class ClientP2PThread implements Runnable {
 			DataInputStream fromClient = new DataInputStream(in);
 			OutputStream out = socket.getOutputStream();
 			DataOutputStream toClient = new DataOutputStream(out);
-			DataOutputStream toServer = new DataOutputStream(out);
 			String request = fromClient.readUTF();
 			System.out.println(request);
 			String response = "";

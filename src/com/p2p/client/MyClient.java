@@ -16,11 +16,15 @@ public class MyClient implements Runnable {
 
 	int portNumber;
 	String folderName;
+	String ipAddress;
+	String serverIP;
 	
-	public MyClient(int portNumber, String folderName) {
+	public MyClient(int portNumber, String folderName, String ipAddress, String serverIP) {
 		super();
 		this.portNumber = portNumber;
 		this.folderName = folderName;
+		this.ipAddress = ipAddress;
+		this.serverIP = serverIP;
 	}
 
 	public void run() {
@@ -28,7 +32,7 @@ public class MyClient implements Runnable {
 		Socket client = null;
 
 		try {
-			client = new Socket("127.0.0.1", 7732);
+			client = new Socket(serverIP, 7732);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,7 +54,7 @@ public class MyClient implements Runnable {
 			File[] listOfFiles = folder.listFiles();
 			for (int i=1; i<listOfFiles.length; i++){
 				Integer rfcNo = Integer.parseInt(listOfFiles[i].getName().substring(3, (int) (listOfFiles[i].getName().length()-4)));
-				String str2 = "ADD<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>127.0.0.1<cr><lf>Port:<sp>"
+				String str2 = "ADD<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
 						+ portNumber + "<cr><lf>Title:<sp>" + listOfFiles[i].getName() + "<cr><lf>";
 				toServer.writeUTF(str2);
 				toServer.flush();
@@ -71,7 +75,7 @@ public class MyClient implements Runnable {
 					int rfcNumber = scanner.nextInt();
 					System.out.println("Provide the RFC's title:");
 					String rfcTitle = scanner.next();
-					str = "ADD<sp>RFC<sp>" + rfcNumber + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>127.0.0.1<cr><lf>Port:<sp>"
+					str = "ADD<sp>RFC<sp>" + rfcNumber + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
 							+ portNumber + "<cr><lf>Title:<sp>" + rfcTitle + "<cr><lf>";
 					toServer.writeUTF(str);
 					System.out.println(fromServer.readUTF());
@@ -82,7 +86,7 @@ public class MyClient implements Runnable {
 					int rfcNo = scanner.nextInt();
 					System.out.println("Provide the RFC's title:");
 					String title = scanner.next();
-					str = "LOOKUP<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>127.0.0.1<cr><lf>Port:<sp>"
+					str = "LOOKUP<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
 							+ portNumber + "<cr><lf>Title:<sp>" + title + "<cr><lf><cr><lf>";
 					toServer.writeUTF(str);
 					System.out.println(fromServer.readUTF());
@@ -90,15 +94,13 @@ public class MyClient implements Runnable {
 
 				case 3:
 					System.out.println("The list of RFCs is as follows:");
-					str = "LIST<sp>ALL<sp>P2P-CI/1.0<cr><lf>Host:<sp>127.0.0.1<cr><lf>Port:<sp>" + portNumber
+					str = "LIST<sp>ALL<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>" + portNumber
 							+ "<cr><lf>";
 					toServer.writeUTF(str);
 					System.out.println(fromServer.readUTF());
 					break;
 
-				case 4:
-					
-					
+				case 4:	
 					System.out.println("Provide RFC number which you want:");
 					int rfcNum = scanner.nextInt();
 					System.out.println("Provide hostname from which you want to download RFC:");
@@ -121,7 +123,7 @@ public class MyClient implements Runnable {
 					    PrintWriter writer = new PrintWriter(folderName + "rfc" + rfcNum + ".txt", "UTF-8");
 					    writer.println(data);
 					    writer.close();
-					    str = "ADD<sp>RFC<sp>" + rfcNum + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>127.0.0.1<cr><lf>Port:<sp>"
+					    str = "ADD<sp>RFC<sp>" + rfcNum + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
 								+ portNumber + "<cr><lf>Title:<sp>" + "rfc" + rfcNum + ".txt" + "<cr><lf>";
 						toServer.writeUTF(str);
 						System.out.println(fromServer.readUTF());
