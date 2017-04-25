@@ -8,8 +8,8 @@ import java.util.List;
 
 public class MyServer {
 
-	protected static volatile List<ClientNode> clientList = new LinkedList<>();
-	protected static volatile List<RFCNode> rfcList = new LinkedList<>();
+	public static volatile List<ClientNode> clientList = new LinkedList<>();
+	public static volatile List<RFCNode> rfcList = new LinkedList<>();
 	
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;

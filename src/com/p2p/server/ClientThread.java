@@ -19,6 +19,9 @@ public class ClientThread extends Thread {
 	}
 
 	public void run() {
+		int portNo = 0;
+		String hostName = "";
+		String title = "";
 		try {
 			InputStream in = socket.getInputStream();
 			DataInputStream fromClient = new DataInputStream(in);
@@ -28,12 +31,6 @@ public class ClientThread extends Thread {
 			while (!request.equals("end")) {
 				String response = "";
 				int flag = 0;
-
-				/*
-				 * while(st != "end"){ System.out.println(st);
-				 * toClient.writeUTF(st+" ye le"); st = fromClient.readUTF(); }
-				 */
-
 				String[] s = request.split("<cr><lf>");
 				for (int m = 0; m < s.length; m = m + 4) {
 					int statusCode = 0;
@@ -42,9 +39,7 @@ public class ClientThread extends Thread {
 					if (type[0].equals("ADD")) {
 						String version = type[3];
 						int rfcNumber = Integer.parseInt(type[2]);
-						int portNo = 0;
-						String hostName = "";
-						String title = "";
+
 						for (int i = m + 1; i < m + 4; i++) {
 							String[] sArray = s[i].split("<sp>");
 							if (sArray[0].equals("Host:")) {
@@ -64,14 +59,14 @@ public class ClientThread extends Thread {
 							statusPhrase = "P2P-CI Version Not Supported";
 						}
 						if (statusCode != 505) {
-							if(getClients(hostName)!=null){
+							if (getClients(hostName) != null) {
 								flag = 1;
 							}
 							if (flag == 0 && addClient(portNo, hostName)) {
 								flag = 1;
 							}
 
-							if (flag == 1 && addRFC(rfcNumber, hostName, title)) {
+							if (flag == 1 && addRFC(rfcNumber, portNo, hostName, title)) {
 								statusCode = 200;
 								statusPhrase = "OK";
 							} else if (flag == 0) {
@@ -86,19 +81,17 @@ public class ClientThread extends Thread {
 					if (type[0].equals("LOOKUP")) {
 						String version = type[3];
 						int rfcNumber = Integer.parseInt(type[2]);
-						int portNumber = 0;
-						String Host = "";
-						String title = "";
+						String rfcTitle = "";
 						for (int i = m + 1; i < m + 4; i++) {
 							String[] sArray = s[i].split("<sp>");
 							if (sArray[0].equals("Host:")) {
-								Host = sArray[1];
+								hostName = sArray[1];
 							}
 							if (sArray[0].equals("Port:")) {
-								portNumber = Integer.parseInt(sArray[1]);
+								portNo = Integer.parseInt(sArray[1]);
 							}
 							if (sArray[0].equals("Title:")) {
-								title = sArray[1];
+								rfcTitle = sArray[1];
 							}
 						}
 						response += version + "<sp>";
@@ -118,42 +111,27 @@ public class ClientThread extends Thread {
 							}
 
 						}
+						
 						response += statusCode + "<sp>" + statusPhrase + "<cr><lf><cr><lf>";
 						if (statusCode == 200) {
 							for (ClientNode clientNode : clients) {
-								response += "RFC<sp>" + rfcNumber + "<sp>" + title + "<sp>" + clientNode.hostName
+								response += "RFC<sp>" + rfcNumber + "<sp>" + rfcTitle + "<sp>" + clientNode.hostName
 										+ "<sp>" + clientNode.portNo + "<cr><lf>";
 							}
 						}
 						response += "<cr><lf>";
-						// check if rfcnumber, title exist with any hostname in
-						// RFC
-						// linkedlist
-						// return list to the given host and port
-						// System.out.println("Hostname: " + Host + " Port: " +
-						// Port
-						// + " RFC: " + rfcNumber + " Title: "
-						// + Title + " version: " + version);
 					}
 					if (type[0].equals("LIST")) {
 						String version = type[2];
-						int Port = 0;
-						String Host = "";
-						String Title = "";
 						for (int i = m + 1; i < m + 3; i++) {
 							String[] sArray = s[i].split("<sp>");
 							if (sArray[0].equals("Host:")) {
-								Host = sArray[1];
+								hostName = sArray[1];
 							}
 							if (sArray[0].equals("Port:")) {
-								Port = Integer.parseInt(sArray[1]);
+								portNo = Integer.parseInt(sArray[1]);
 							}
 						}
-						// return whole RFC LinkedList content to this host and
-						// port
-						// System.out.println("Hostname: " + Host + " Port: " +
-						// Port
-						// + " version: " + version);
 						response += version + "<sp>";
 						if (!version.equals("P2P-CI/1.0")) {
 							statusCode = 505;
@@ -173,34 +151,36 @@ public class ClientThread extends Thread {
 					}
 				}
 
-				/* for (RFCNode rfcNode : MyServer.rfcList) {
-				  System.out.println(rfcNode.rfcNo + " " + rfcNode.hostName +
-				  " " + rfcNode.title); }*/
-				
-				  for (ClientNode clientNode : MyServer.clientList) {
-				  System.out.println(clientNode.portNo + " " + clientNode.hostName); }
-				 System.out.println();
+				for (ClientNode clientNode : MyServer.clientList) {
+					System.out.println(clientNode.portNo + " " + clientNode.hostName);
+				}
+				System.out.println();
 				toClient.writeUTF(response);
 				request = fromClient.readUTF();
 			}
 
 		} catch (IOException e) {
 			System.out.println(e);
+			for (ClientNode clientNode : MyServer.clientList) {
+				if (clientNode.portNo == portNo) {
+					MyServer.clientList.remove(clientNode);
+				}
+			}
+			ClientNode clientNode = new ClientNode(portNo, hostName);
+			for (RFCNode rfcNode : MyServer.rfcList) {
+				if (rfcNode.hostName.equals(clientNode)) {
+					MyServer.rfcList.remove(rfcNode);
+				}
+			}
 		}
-		// When client closes connection
-		/*
-		 * try { socket.close(); } catch (IOException e) {
-		 * System.out.println(e); }
-		 */
-
 	}
 
 	public boolean addClient(int portNo, String hostName) {
 		return MyServer.clientList.add(new ClientNode(portNo, hostName));
 	}
 
-	public boolean addRFC(int rfcNo, String hostName, String title) {
-		return MyServer.rfcList.add(new RFCNode(rfcNo, hostName, title));
+	public boolean addRFC(int rfcNo, int portNo, String hostName, String title) {
+		return MyServer.rfcList.add(new RFCNode(rfcNo, new ClientNode(portNo, hostName), title));
 
 	}
 
@@ -211,14 +191,7 @@ public class ClientThread extends Thread {
 		for (RFCNode rfcNode : MyServer.rfcList) {
 			System.out.println("Checking with: " + rfcNode.rfcNo);
 			if (rfcNode.rfcNo == rfcNo) {
-				System.out.println("Found rfc");
-				hostName = rfcNode.hostName;
-				ClientNode clientNode = getClients(hostName);
-				if (clientNode == null) {
-					MyServer.rfcList.remove(rfcNode);
-				} else {
-					clients.add(clientNode);
-				}
+				clients.add(rfcNode.hostName);
 			}
 		}
 
@@ -238,13 +211,12 @@ public class ClientThread extends Thread {
 	private String getAllRFCs() {
 		String response = "<cr><lf>";
 		for (RFCNode rfcNode : MyServer.rfcList) {
-			ClientNode clientNode = getClients(rfcNode.hostName);
-			if (clientNode == null) {
+			if (rfcNode.hostName == null) {
 				MyServer.rfcList.remove(rfcNode);
 				continue;
 			}
-			response += "RFC<sp>" + rfcNode.rfcNo + "<sp>" + rfcNode.title + "<sp>" + rfcNode.hostName + "<sp>"
-					+ clientNode.portNo + "<cr><lf>";
+			response += "RFC<sp>" + rfcNode.rfcNo + "<sp>" + rfcNode.title + "<sp>" + rfcNode.hostName.hostName + "<sp>"
+					+ rfcNode.hostName.portNo + "<cr><lf>";
 		}
 		response += "<cr><lf>";
 		return response;
