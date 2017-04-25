@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ClientThread extends Thread {
@@ -161,15 +162,20 @@ public class ClientThread extends Thread {
 
 		} catch (IOException e) {
 			System.out.println(e);
-			for (ClientNode clientNode : MyServer.clientList) {
+			Iterator<ClientNode> iterator = MyServer.clientList.iterator();
+			while(iterator.hasNext()) {
+				ClientNode clientNode = iterator.next();
 				if (clientNode.portNo == portNo) {
-					MyServer.clientList.remove(clientNode);
+					iterator.remove();
 				}
 			}
+			
+			Iterator<RFCNode> iterator2 = MyServer.rfcList.iterator();
 			ClientNode clientNode = new ClientNode(portNo, hostName);
-			for (RFCNode rfcNode : MyServer.rfcList) {
+			while(iterator.hasNext()) {
+				RFCNode rfcNode = iterator2.next();
 				if (rfcNode.hostName.equals(clientNode)) {
-					MyServer.rfcList.remove(rfcNode);
+					iterator2.remove();
 				}
 			}
 		}

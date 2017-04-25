@@ -29,6 +29,7 @@ public class ClientP2PThread implements Runnable {
 			DataInputStream fromClient = new DataInputStream(in);
 			OutputStream out = socket.getOutputStream();
 			DataOutputStream toClient = new DataOutputStream(out);
+			DataOutputStream toServer = new DataOutputStream(out);
 			String request = fromClient.readUTF();
 			System.out.println(request);
 			String response = "";
@@ -70,7 +71,7 @@ public class ClientP2PThread implements Runnable {
 					if(fileFound){
 						statusCode = 200;
 						statusPhrase = "OK";
-					}else{
+						}else{
 						statusCode = 404;
 						statusPhrase = "Not Found";
 					}
@@ -83,11 +84,10 @@ public class ClientP2PThread implements Runnable {
 			}
 
 			toClient.writeUTF(response);
-//			toClient.flush();
 			socket.close();
 
 		} catch (Exception e) {
-			System.out.println("Exception");
+			e.printStackTrace();
 		}
 	}
 
