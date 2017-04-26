@@ -16,14 +16,13 @@ public class MyClient implements Runnable {
 
 	int portNumber;
 	String folderName;
-	String ipAddress;
 	String serverIP;
-	
-	public MyClient(int portNumber, String folderName, String ipAddress, String serverIP) {
+	String ipAddress;
+
+	public MyClient(int portNumber, String folderName, String serverIP) {
 		super();
 		this.portNumber = portNumber;
 		this.folderName = folderName;
-		this.ipAddress = ipAddress;
 		this.serverIP = serverIP;
 	}
 
@@ -33,11 +32,12 @@ public class MyClient implements Runnable {
 
 		try {
 			client = new Socket(serverIP, 7732);
+			ipAddress = client.getLocalAddress().getHostAddress();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			
+
 			System.out.println("Welcome to P2P-CI system!!");
 			System.out.println("What would you like to do?");
 			Scanner scanner = new Scanner(System.in);
@@ -47,21 +47,22 @@ public class MyClient implements Runnable {
 			String str = null;
 			InputStream in = client.getInputStream();
 			DataInputStream fromServer = new DataInputStream(in);
-			
-			
+
 			// adding all local files to server
 			File folder = new File(folderName);
 			File[] listOfFiles = folder.listFiles();
-			for (int i=1; i<listOfFiles.length; i++){
-				Integer rfcNo = Integer.parseInt(listOfFiles[i].getName().substring(3, (int) (listOfFiles[i].getName().length()-4)));
-				String str2 = "ADD<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
-						+ portNumber + "<cr><lf>Title:<sp>" + listOfFiles[i].getName() + "<cr><lf>";
+			for (int i = 1; i < listOfFiles.length; i++) {
+				Integer rfcNo = Integer
+						.parseInt(listOfFiles[i].getName().substring(3, (int) (listOfFiles[i].getName().length() - 4)));
+				String str2 = "ADD<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>" + ipAddress
+						+ "<cr><lf>Port:<sp>" + portNumber + "<cr><lf>Title:<sp>" + listOfFiles[i].getName()
+						+ "<cr><lf>";
 				toServer.writeUTF(str2);
 				toServer.flush();
 				fromServer.readUTF();
 			}
-			
-			while (a < 5) {
+
+			while (a <= 5) {
 				System.out.println("1. Add RFC");
 				System.out.println("2. Lookup RFC");
 				System.out.println("3. Get list of RFCs");
@@ -73,10 +74,9 @@ public class MyClient implements Runnable {
 				case 1:
 					System.out.println("Provide RFC number which you want to add:");
 					int rfcNumber = scanner.nextInt();
-					System.out.println("Provide the RFC's title:");
-					String rfcTitle = scanner.next();
-					str = "ADD<sp>RFC<sp>" + rfcNumber + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
-							+ portNumber + "<cr><lf>Title:<sp>" + rfcTitle + "<cr><lf>";
+					str = "ADD<sp>RFC<sp>" + rfcNumber + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>" + ipAddress
+							+ "<cr><lf>Port:<sp>" + portNumber + "<cr><lf>Title:<sp>" + "rfc" + rfcNumber + ".txt"
+							+ "<cr><lf>";
 					toServer.writeUTF(str);
 					System.out.println(fromServer.readUTF());
 					break;
@@ -84,23 +84,22 @@ public class MyClient implements Runnable {
 				case 2:
 					System.out.println("Provide the RFC number which you want to lookup:");
 					int rfcNo = scanner.nextInt();
-					System.out.println("Provide the RFC's title:");
-					String title = scanner.next();
-					str = "LOOKUP<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
-							+ portNumber + "<cr><lf>Title:<sp>" + title + "<cr><lf><cr><lf>";
+					str = "LOOKUP<sp>RFC<sp>" + rfcNo + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>" + ipAddress
+							+ "<cr><lf>Port:<sp>" + portNumber + "<cr><lf>Title:<sp>" + "rfc" + rfcNo + ".txt"
+							+ "<cr><lf><cr><lf>";
 					toServer.writeUTF(str);
 					System.out.println(fromServer.readUTF());
 					break;
 
 				case 3:
 					System.out.println("The list of RFCs is as follows:");
-					str = "LIST<sp>ALL<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>" + portNumber
+					str = "LIST<sp>ALL<sp>P2P-CI/1.0<cr><lf>Host:<sp>" + ipAddress + "<cr><lf>Port:<sp>" + portNumber
 							+ "<cr><lf>";
 					toServer.writeUTF(str);
 					System.out.println(fromServer.readUTF());
 					break;
 
-				case 4:	
+				case 4:
 					System.out.println("Provide RFC number which you want:");
 					int rfcNum = scanner.nextInt();
 					System.out.println("Provide hostname from which you want to download RFC:");
@@ -113,18 +112,17 @@ public class MyClient implements Runnable {
 					DataOutputStream outputStream2 = new DataOutputStream(s2.getOutputStream());
 					InputStream inputStream2 = s2.getInputStream();
 					DataInputStream inputStreamReader2 = new DataInputStream(inputStream2);
-					//BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream2));
 					outputStream2.writeUTF(str);
 					String output = inputStreamReader2.readUTF();
 					List<String> response = Arrays.asList(output.split("<cr><lf>"));
 					String data = response.get(response.size() - 1);
-					//System.out.println(inputStreamReader2.readUTF());
-					try{
-					    PrintWriter writer = new PrintWriter(folderName + "rfc" + rfcNum + ".txt", "UTF-8");
-					    writer.println(data);
-					    writer.close();
-					    str = "ADD<sp>RFC<sp>" + rfcNum + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>"+ ipAddress +"<cr><lf>Port:<sp>"
-								+ portNumber + "<cr><lf>Title:<sp>" + "rfc" + rfcNum + ".txt" + "<cr><lf>";
+					try {
+						PrintWriter writer = new PrintWriter(folderName + "rfc" + rfcNum + ".txt", "UTF-8");
+						writer.println(data);
+						writer.close();
+						str = "ADD<sp>RFC<sp>" + rfcNum + "<sp>P2P-CI/1.0<cr><lf>Host:<sp>" + ipAddress
+								+ "<cr><lf>Port:<sp>" + portNumber + "<cr><lf>Title:<sp>" + "rfc" + rfcNum + ".txt"
+								+ "<cr><lf>";
 						toServer.writeUTF(str);
 						System.out.println(fromServer.readUTF());
 					} catch (IOException e) {
@@ -133,12 +131,20 @@ public class MyClient implements Runnable {
 					s2.close();
 					break;
 
+				case 5:
+					client.close();
+					Thread.currentThread().stop();
+					break;
+					
 				default:
 					System.out.println("Kindly make a valid choice!");
+					a = scanner.nextInt();
 					break;
 				}
 			}
-			
+			//client.close();
+			scanner.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

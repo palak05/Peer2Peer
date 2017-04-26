@@ -1,7 +1,6 @@
 package com.p2p.client;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -15,7 +14,6 @@ public class Client_P2P {
 		
 		Random random = new Random();
 		int port = random.nextInt(40000) + 10001;
-		String ipAddress = Inet4Address.getLocalHost().getHostAddress();
 		ServerSocket serverSocket = null;
 		System.out.println("Which folder does this client have? ");
 		Scanner scanner = new Scanner(System.in);
@@ -29,7 +27,7 @@ public class Client_P2P {
 			System.out.println(e);
 		}
 		
-		Thread thread1 = new Thread(new MyClient(port, folderName, ipAddress, serverIP));
+		Thread thread1 = new Thread(new MyClient(port, folderName, serverIP));
 		thread1.start();
 		Thread thread = new Thread(new P2PThread(serverSocket, folderName));
 		thread.run();

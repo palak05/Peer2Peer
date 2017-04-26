@@ -161,7 +161,10 @@ public class ClientThread extends Thread {
 			}
 
 		} catch (IOException e) {
-			System.out.println(e);
+			//e.printStackTrace();
+			this.stop();
+			
+		}finally {
 			Iterator<ClientNode> iterator = MyServer.clientList.iterator();
 			while(iterator.hasNext()) {
 				ClientNode clientNode = iterator.next();
@@ -169,7 +172,7 @@ public class ClientThread extends Thread {
 					iterator.remove();
 				}
 			}
-			
+			System.out.println();
 			Iterator<RFCNode> iterator2 = MyServer.rfcList.iterator();
 			ClientNode clientNode = new ClientNode(portNo, hostName);
 			while(iterator2.hasNext()) {
