@@ -14,7 +14,7 @@ public class MyServer {
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
 		try {
-			serverSocket = new ServerSocket(7732);
+			serverSocket = new ServerSocket(7734);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

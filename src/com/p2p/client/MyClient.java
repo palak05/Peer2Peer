@@ -31,7 +31,7 @@ public class MyClient implements Runnable {
 		Socket client = null;
 
 		try {
-			client = new Socket(serverIP, 7732);
+			client = new Socket(serverIP, 7734);
 			ipAddress = client.getLocalAddress().getHostAddress();
 		} catch (IOException e) {
 			e.printStackTrace();
