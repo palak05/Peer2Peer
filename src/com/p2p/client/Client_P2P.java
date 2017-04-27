@@ -8,17 +8,17 @@ import java.util.Scanner;
 
 public class Client_P2P {
 	
-	public static final String FILENAME = "C:/Users/admin/Documents/IP/clientfolders/";
+	public static final String FOLDER_LOCATION = "C:/Users/admin/Documents/IP/clientfolders/";
 
 	public static void main(String[] args) throws UnknownHostException {
 		
 		Random random = new Random();
 		int port = random.nextInt(40000) + 10001;
 		ServerSocket serverSocket = null;
-		System.out.println("Which folder does this client have? ");
+		System.out.println("Assign a folder number to this client: ");
 		Scanner scanner = new Scanner(System.in);
 		Integer foldernumber = scanner.nextInt();
-		String folderName = FILENAME + foldernumber.toString() + "/";	
+		String folderName = FOLDER_LOCATION + foldernumber.toString() + "/";	
 		System.out.println("What is server's IP address?");
 		String serverIP = scanner.next();
 		try {
