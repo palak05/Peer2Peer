@@ -10,13 +10,13 @@ public class MyServer {
 
 	public static volatile List<ClientNode> clientList = new LinkedList<>();
 	public static volatile List<RFCNode> rfcList = new LinkedList<>();
-	
+
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(7732);
 		} catch (IOException e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		Socket clientSocket = null;
 		while (true) {
@@ -24,7 +24,7 @@ public class MyServer {
 				clientSocket = serverSocket.accept();
 				ClientThread clientThread = new ClientThread(clientSocket);
 				clientThread.start();
-				
+
 			} catch (IOException e) {
 				System.out.println(e);
 			}

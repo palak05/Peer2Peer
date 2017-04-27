@@ -45,4 +45,10 @@ public class ClientNode {
 				return false;
 			return true;
 		}
+
+		@Override
+		public String toString() {
+			return "ClientNode [portNo=" + portNo + ", hostName=" + hostName + "]";
+		}
+		
 }

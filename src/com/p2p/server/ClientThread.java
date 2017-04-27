@@ -112,7 +112,7 @@ public class ClientThread extends Thread {
 							}
 
 						}
-						
+
 						response += statusCode + "<sp>" + statusPhrase + "<cr><lf><cr><lf>";
 						if (statusCode == 200) {
 							for (ClientNode clientNode : clients) {
@@ -152,30 +152,24 @@ public class ClientThread extends Thread {
 					}
 				}
 
-				for (ClientNode clientNode : MyServer.clientList) {
-					System.out.println(clientNode.portNo + " " + clientNode.hostName);
-				}
-				System.out.println();
 				toClient.writeUTF(response);
 				request = fromClient.readUTF();
 			}
 
 		} catch (IOException e) {
-			//e.printStackTrace();
 			this.stop();
-			
-		}finally {
+
+		} finally {
 			Iterator<ClientNode> iterator = MyServer.clientList.iterator();
-			while(iterator.hasNext()) {
+			while (iterator.hasNext()) {
 				ClientNode clientNode = iterator.next();
 				if (clientNode.portNo == portNo) {
 					iterator.remove();
 				}
 			}
-			System.out.println();
 			Iterator<RFCNode> iterator2 = MyServer.rfcList.iterator();
 			ClientNode clientNode = new ClientNode(portNo, hostName);
-			while(iterator2.hasNext()) {
+			while (iterator2.hasNext()) {
 				RFCNode rfcNode = iterator2.next();
 				if (rfcNode.hostName.equals(clientNode)) {
 					iterator2.remove();
@@ -186,7 +180,7 @@ public class ClientThread extends Thread {
 
 	public boolean addClient(int portNo, String hostName) {
 		ClientNode clientNode = new ClientNode(portNo, hostName);
-		if(MyServer.clientList.contains(clientNode)){
+		if (MyServer.clientList.contains(clientNode)) {
 			return true;
 		}
 		return MyServer.clientList.add(clientNode);
@@ -194,7 +188,7 @@ public class ClientThread extends Thread {
 
 	public boolean addRFC(int rfcNo, int portNo, String hostName, String title) {
 		RFCNode rfcNode = new RFCNode(rfcNo, new ClientNode(portNo, hostName), title);
-		if(MyServer.rfcList.contains(rfcNode)){
+		if (MyServer.rfcList.contains(rfcNode)) {
 			return true;
 		}
 		return MyServer.rfcList.add(rfcNode);
@@ -202,11 +196,8 @@ public class ClientThread extends Thread {
 	}
 
 	public List<ClientNode> findRFC(int rfcNo) {
-		String hostName = "";
-		System.out.println("Searching: " + rfcNo);
 		List<ClientNode> clients = new ArrayList<>();
 		for (RFCNode rfcNode : MyServer.rfcList) {
-			System.out.println("Checking with: " + rfcNode.rfcNo);
 			if (rfcNode.rfcNo == rfcNo) {
 				clients.add(rfcNode.hostName);
 			}
